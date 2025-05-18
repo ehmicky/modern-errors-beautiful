@@ -10,4 +10,7 @@ export interface Options {}
  * ```js
  * ```
  */
-export default function modernErrorsBeautiful(value: unknown, options?: Options): object
+export default function modernErrorsBeautiful(
+  value: unknown,
+  options?: Options,
+): object
