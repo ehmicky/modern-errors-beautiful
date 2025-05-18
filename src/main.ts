@@ -20,16 +20,12 @@ const getOptions = (options: Options = {}) => {
  *
  * @example
  * ```js
- * const cliMain = () => {
- *   try {
- *     // ...
- *   } catch (error) {
- *     // Logs `error` then exits the process
- *     BaseError.exit(error)
- *   }
+ * try {
+ *   // ...
+ * } catch (error) {
+ *   const message = BaseError.beautiful(error)
+ *   console.error(message)
  * }
- *
- * cliMain()
  * ```
  */
 const beautiful = ({ error, options }: Info<Options>['instanceMethods']) =>

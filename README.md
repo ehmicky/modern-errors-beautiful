@@ -10,19 +10,16 @@
 [![Medium](https://img.shields.io/badge/-Medium-808080.svg?logo=medium&colorA=404040)](https://medium.com/@ehmicky)
 
 [`modern-errors`](https://github.com/ehmicky/modern-errors)
-[plugin](https://github.com/ehmicky/modern-errors#-plugins) to handle errors in
-CLI modules.
+[plugin](https://github.com/ehmicky/modern-errors#-plugins) to prettify errors.
 
-This adds [`BaseError.exit(error)`](#baseerrorexiterror) which logs `error` then
-exits the process.
+This adds [`BaseError.beautiful(error)`](#baseerrorbeautifulerror) which
+prettifies error messages and stacks.
 
 # Features
 
 - 🖍️ Pretty [colors](#%EF%B8%8F-colors), [icons](#-icon) and [header](#-header)
-- 🚒 [Graceful exit](#-timeout)
 - ⛑️ [Normalize](https://github.com/ehmicky/normalize-exception) invalid errors
-- 🔕 Log verbosity: [message](#-silent), [stack](#-stack), [properties](#-props)
-- 🚨 Custom [exit code](#-exitcode)
+- 🔕 Log verbosity: [stack](#-stack), [properties](#-props)
 - 💥 Exception-safe
 
 # Screenshot
@@ -37,28 +34,23 @@ exits the process.
 ```js
 import ModernError from 'modern-errors'
 
-import modernErrorsCli from 'modern-errors-beautiful'
+import modernErrorsBeautiful from 'modern-errors-beautiful'
 
 export const BaseError = ModernError.subclass('BaseError', {
-  plugins: [modernErrorsCli],
+  plugins: [modernErrorsBeautiful],
 })
 // ...
 ```
 
-Calling [`BaseError.exit(error)`](#baseerrorexiterror) in the CLI's top-level
-error handler.
+Prettifying the error.
 
 ```js
-const cliMain = () => {
-  try {
-    // ...
-  } catch (error) {
-    // Logs `error` then exits the process
-    BaseError.exit(error)
-  }
+try {
+  // ...
+} catch (error) {
+  const message = BaseError.beautiful(error)
+  console.error(message)
 }
-
-cliMain()
 ```
 
 # Install
@@ -77,7 +69,7 @@ not CommonJS.
 
 # API
 
-## modernErrorsCli
+## modernErrorsBeautiful
 
 _Type_: `Plugin`
 
@@ -85,11 +77,12 @@ Plugin object to pass to the
 [`plugins` option](https://github.com/ehmicky/modern-errors#adding-plugins) of
 `ErrorClass.subclass()`.
 
-## BaseError.exit(error)
+## BaseError.beautiful(error)
 
-`error`: `any`
+`error`: `any`\
+_Return value_: `string`
 
-Logs `error` on the console (`stderr`) then exits the process.
+Returns `error` as a prettified string.
 
 This never throws. Invalid errors are silently
 [normalized](https://github.com/ehmicky/normalize-exception).
@@ -98,35 +91,19 @@ This never throws. Invalid errors are silently
 
 _Type_: `object`
 
-### 🚨 exitCode
-
-_Type_: `integer`\
-_Default_: `1`
-
-Process [exit code](https://en.wikipedia.org/wiki/Exit_status).
-
-Note: when passing invalid `options`, the exit code is always `125`.
-
 ### 📕 stack
 
 _Type_: `boolean`\
 _Default_: `true`
 
-Whether to log the error's stack trace.
+Whether to show the error's stack trace.
 
 ### 📢 props
 
 _Type_: `boolean`\
 _Default_: `true`
 
-Whether to log the error's additional properties.
-
-### 🔕 silent
-
-_Type_: `boolean`\
-_Default_: `false`
-
-Exits the process without logging anything on the console.
+Whether to show the error's additional properties.
 
 ### 🖍️ colors
 
@@ -157,20 +134,6 @@ listed [here](https://github.com/ehmicky/chalk-string#available-styles). Several
 styles can be specified by using spaces. Can be disabled by passing an empty
 string.
 
-### 🚒 timeout
-
-_Type_: `integer` (in milliseconds)\
-_Default_: `5000` (5 seconds)
-
-The process exits gracefully: it waits for any ongoing tasks (callbacks,
-promises, etc.) to complete, up to a specific `timeout`.
-
-Special values:
-
-- `0`: Exits right away, without waiting for ongoing tasks
-- `Number.POSITIVE_INFINITY`: Waits for ongoing tasks forever, without timing
-  out
-
 ## Configuration
 
 [Options](#options) can apply to (in priority order):
@@ -180,8 +143,8 @@ Special values:
 
 ```js
 export const BaseError = ModernError.subclass('BaseError', {
-  plugins: [modernErrorsCli],
-  cli: options,
+  plugins: [modernErrorsBeautiful],
+  beautiful: options,
 })
 ```
 
@@ -189,20 +152,22 @@ export const BaseError = ModernError.subclass('BaseError', {
   [`ErrorClass.subclass()`](https://github.com/ehmicky/modern-errors#options-1)
 
 ```js
-export const InputError = BaseError.subclass('InputError', { cli: options })
+export const InputError = BaseError.subclass('InputError', {
+  beautiful: options,
+})
 ```
 
 - A specific error: second argument to
   [`new ErrorClass()`](https://github.com/ehmicky/modern-errors#options-3)
 
 ```js
-throw new InputError('...', { cli: options })
+throw new InputError('...', { beautiful: options })
 ```
 
-- A specific [`BaseError.exit(error)`](#baseerrorexiterror) call
+- A specific [`BaseError.beautiful(error)`](#baseerrorbeautifulerror) call
 
 ```js
-BaseError.exit(error, options)
+BaseError.beautiful(error, options)
 ```
 
 # Related projects
