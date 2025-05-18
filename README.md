@@ -1,21 +1,64 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ehmicky/design/main/modern-errors/modern-errors_dark.svg"/>
+  <img alt="modern-errors logo" src="https://raw.githubusercontent.com/ehmicky/design/main/modern-errors/modern-errors.svg" width="600"/>
+</picture>
+
 [![Node](https://img.shields.io/badge/-Node.js-808080?logo=node.js&colorA=404040&logoColor=66cc33)](https://www.npmjs.com/package/modern-errors-beautiful)
-[![Browsers](https://img.shields.io/badge/-Browsers-808080?logo=firefox&colorA=404040)](https://unpkg.com/modern-errors-beautiful?module)
-[![TypeScript](https://img.shields.io/badge/-Typed-808080?logo=typescript&colorA=404040&logoColor=0096ff)](/src/main.d.ts)
+[![TypeScript](https://img.shields.io/badge/-Typed-808080?logo=typescript&colorA=404040&logoColor=0096ff)](/src/main.ts)
 [![Codecov](https://img.shields.io/badge/-Tested%20100%25-808080?logo=codecov&colorA=404040)](https://codecov.io/gh/ehmicky/modern-errors-beautiful)
-[![Minified size](https://img.shields.io/bundlephobia/minzip/modern-errors-beautiful?label&colorA=404040&colorB=808080&logo=webpack)](https://bundlephobia.com/package/modern-errors-beautiful)
 [![Mastodon](https://img.shields.io/badge/-Mastodon-808080.svg?logo=mastodon&colorA=404040&logoColor=9590F9)](https://fosstodon.org/@ehmicky)
 [![Medium](https://img.shields.io/badge/-Medium-808080.svg?logo=medium&colorA=404040)](https://medium.com/@ehmicky)
 
-`modern-errors` plugin to prettify errors.
+[`modern-errors`](https://github.com/ehmicky/modern-errors)
+[plugin](https://github.com/ehmicky/modern-errors#-plugins) to handle errors in
+CLI modules.
 
-Work in progress!
+This adds [`BaseError.exit(error)`](#baseerrorexiterror) which logs `error` then
+exits the process.
 
 # Features
 
+- 🖍️ Pretty [colors](#%EF%B8%8F-colors), [icons](#-icon) and [header](#-header)
+- 🚒 [Graceful exit](#-timeout)
+- ⛑️ [Normalize](https://github.com/ehmicky/normalize-exception) invalid errors
+- 🔕 Log verbosity: [message](#-silent), [stack](#-stack), [properties](#-props)
+- 🚨 Custom [exit code](#-exitcode)
+- 💥 Exception-safe
+
+# Screenshot
+
+<img alt="modern-errors-beautiful screenshot" src="https://raw.githubusercontent.com/ehmicky/handle-cli-error/main/docs/screenshot.png" width="500"/>
+
 # Example
 
+[Adding the plugin](https://github.com/ehmicky/modern-errors#adding-plugins) to
+[`modern-errors`](https://github.com/ehmicky/modern-errors).
+
 ```js
-import modernErrorsBeautiful from 'modern-errors-beautiful'
+import ModernError from 'modern-errors'
+
+import modernErrorsCli from 'modern-errors-beautiful'
+
+export const BaseError = ModernError.subclass('BaseError', {
+  plugins: [modernErrorsCli],
+})
+// ...
+```
+
+Calling [`BaseError.exit(error)`](#baseerrorexiterror) in the CLI's top-level
+error handler.
+
+```js
+const cliMain = () => {
+  try {
+    // ...
+  } catch (error) {
+    // Logs `error` then exits the process
+    BaseError.exit(error)
+  }
+}
+
+cliMain()
 ```
 
 # Install
@@ -24,12 +67,7 @@ import modernErrorsBeautiful from 'modern-errors-beautiful'
 npm install modern-errors-beautiful
 ```
 
-<!--
-This package works in Node.js >=18.18.0.
--->
-
-This package works in both Node.js >=18.18.0 and
-[browsers](https://raw.githubusercontent.com/ehmicky/dev-tasks/main/src/browserslist).
+This package requires Node.js >=18.18.0.
 
 This is an ES module. It must be loaded using
 [an `import` or `import()` statement](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c),
@@ -39,21 +77,156 @@ not CommonJS.
 
 # API
 
-## modernErrorsBeautiful(value, options?)
+## modernErrorsCli
 
-`value` `any`\
-`options` [`Options?`](#options)\
-_Return value_: [`object`](#return-value)
+_Type_: `Plugin`
 
-### Options
+Plugin object to pass to the
+[`plugins` option](https://github.com/ehmicky/modern-errors#adding-plugins) of
+`ErrorClass.subclass()`.
 
-Object with the following properties.
+## BaseError.exit(error)
 
-### Return value
+`error`: `any`
 
-Object with the following properties.
+Logs `error` on the console (`stderr`) then exits the process.
+
+This never throws. Invalid errors are silently
+[normalized](https://github.com/ehmicky/normalize-exception).
+
+## Options
+
+_Type_: `object`
+
+### 🚨 exitCode
+
+_Type_: `integer`\
+_Default_: `1`
+
+Process [exit code](https://en.wikipedia.org/wiki/Exit_status).
+
+Note: when passing invalid `options`, the exit code is always `125`.
+
+### 📕 stack
+
+_Type_: `boolean`\
+_Default_: `true`
+
+Whether to log the error's stack trace.
+
+### 📢 props
+
+_Type_: `boolean`\
+_Default_: `true`
+
+Whether to log the error's additional properties.
+
+### 🔕 silent
+
+_Type_: `boolean`\
+_Default_: `false`
+
+Exits the process without logging anything on the console.
+
+### 🖍️ colors
+
+_Type_: `boolean`\
+_Default_: `true` in terminals, `false` otherwise
+
+Whether to colorize the error's message, stack trace and additional properties.
+
+Quoted strings in the error's message are printed in bold (for `"..."` and
+`'...'`) and in italic (for `` `...` ``).
+
+### ❌ icon
+
+_Type_: `string`\
+_Default_: `'cross'`
+
+Icon prepended to the error's name. The available values are listed
+[here](https://github.com/sindresorhus/figures/blob/main/readme.md#figures-1).
+Can be disabled by passing an empty string.
+
+### 💄 header
+
+_Type_: `string`\
+_Default_: `'red bold'`
+
+Color/style of the error's [icon](#-icon) and name. The available values are
+listed [here](https://github.com/ehmicky/chalk-string#available-styles). Several
+styles can be specified by using spaces. Can be disabled by passing an empty
+string.
+
+### 🚒 timeout
+
+_Type_: `integer` (in milliseconds)\
+_Default_: `5000` (5 seconds)
+
+The process exits gracefully: it waits for any ongoing tasks (callbacks,
+promises, etc.) to complete, up to a specific `timeout`.
+
+Special values:
+
+- `0`: Exits right away, without waiting for ongoing tasks
+- `Number.POSITIVE_INFINITY`: Waits for ongoing tasks forever, without timing
+  out
+
+## Configuration
+
+[Options](#options) can apply to (in priority order):
+
+- Any error: second argument to
+  [`ModernError.subclass()`](https://github.com/ehmicky/modern-errors#options-1)
+
+```js
+export const BaseError = ModernError.subclass('BaseError', {
+  plugins: [modernErrorsCli],
+  cli: options,
+})
+```
+
+- Any error of a specific class (and its subclasses): second argument to
+  [`ErrorClass.subclass()`](https://github.com/ehmicky/modern-errors#options-1)
+
+```js
+export const InputError = BaseError.subclass('InputError', { cli: options })
+```
+
+- A specific error: second argument to
+  [`new ErrorClass()`](https://github.com/ehmicky/modern-errors#options-3)
+
+```js
+throw new InputError('...', { cli: options })
+```
+
+- A specific [`BaseError.exit(error)`](#baseerrorexiterror) call
+
+```js
+BaseError.exit(error, options)
+```
 
 # Related projects
+
+- [`handle-cli-error`](https://github.com/ehmicky/handle-cli-error): 💣 Error
+  handler for CLI applications 💥
+- [`beautiful-error`](https://github.com/ehmicky/beautiful-error): Prettify
+  error messages and stacks
+- [`modern-errors`](https://github.com/ehmicky/modern-errors): Handle errors in
+  a simple, stable, consistent way
+- [`modern-errors-process`](https://github.com/ehmicky/modern-errors-process):
+  Handle process errors
+- [`modern-errors-bugs`](https://github.com/ehmicky/modern-errors-bugs): Print
+  where to report bugs
+- [`modern-errors-serialize`](https://github.com/ehmicky/modern-errors-serialize):
+  Serialize/parse errors
+- [`modern-errors-clean`](https://github.com/ehmicky/modern-errors-clean): Clean
+  stack traces
+- [`modern-errors-http`](https://github.com/ehmicky/modern-errors-http): Create
+  HTTP error responses
+- [`modern-errors-winston`](https://github.com/ehmicky/modern-errors-winston):
+  Log errors with Winston
+- [`modern-errors-switch`](https://github.com/ehmicky/modern-errors-switch):
+  Execute class-specific logic
 
 # Support
 

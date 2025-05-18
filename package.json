@@ -53,10 +53,18 @@
   "directories": {
     "lib": "src"
   },
+  "dependencies": {
+    "beautiful-error": "^1.0.1"
+  },
   "devDependencies": {
     "@ehmicky/dev-tasks": "^3.0.34",
     "@ehmicky/eslint-config": "^20.0.31",
-    "@ehmicky/prettier-config": "^1.0.6"
+    "@ehmicky/prettier-config": "^1.0.6",
+    "figures": "^6.1.0",
+    "test-each": "^7.0.1"
+  },
+  "peerDependencies": {
+    "modern-errors": "^7.0.3"
   },
   "engines": {
     "node": ">=18.18.0"
