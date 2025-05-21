@@ -1,3 +1,3 @@
-const templateName = (value) => value
+const modernErrorsBeautiful = (value) => value
 
-export default templateName
+export default modernErrorsBeautiful

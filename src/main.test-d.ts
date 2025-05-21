@@ -1,8 +1,8 @@
 import { expectAssignable, expectType } from 'tsd'
 
-import templateName, { type Options } from 'template-name'
+import modernErrorsBeautiful, { type Options } from 'modern-errors-beautiful'
 
-expectType<object>(templateName(true))
+expectType<object>(modernErrorsBeautiful(true))
 
-templateName(true, {})
+modernErrorsBeautiful(true, {})
 expectAssignable<Options>({})
