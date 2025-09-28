@@ -60,3 +60,11 @@ test('Can use aggregate errors', (t) => {
   t.true(message.includes(`${figures.warning} ExitCodeError: test`))
   t.true(message.includes(`${figures.info} DatabaseError: inner`))
 })
+
+test('Can pass "cause"', (t) => {
+  const inner = new DatabaseError('inner')
+  const outer = new ExitCodeError('test', { errors: [inner] })
+  const message = BaseError.beautiful(outer, { cause: false })
+  t.true(message.includes(`${figures.warning} ExitCodeError: test`))
+  t.false(message.includes('DatabaseError'))
+})
