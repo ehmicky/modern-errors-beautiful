@@ -19,7 +19,8 @@ prettifies error messages and stacks.
 
 - 🖍️ Pretty [colors](#%EF%B8%8F-colors), [icons](#-icon) and [header](#-header)
 - ⛑️ [Normalize](https://github.com/ehmicky/normalize-exception) invalid errors
-- 🔕 Log verbosity: [stack](#-stack), [properties](#-props)
+- 🔕 Log verbosity: [stack](#-stack), [nested errors](#-cause),
+  [properties](#-props)
 - 💥 Exception-safe
 
 # Screenshot
@@ -97,6 +98,14 @@ _Type_: `boolean`\
 _Default_: `true`
 
 Whether to show the error's stack trace.
+
+#### 🪏 cause
+
+_Type_: `boolean`\
+_Default_: `true`
+
+Whether to show
+[aggregate errors](https://github.com/ehmicky/modern-errors#aggregate-errors).
 
 ### 📢 props
 
