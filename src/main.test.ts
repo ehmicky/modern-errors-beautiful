@@ -1,4 +1,5 @@
 import test from 'ava'
+import beautifulError from 'beautiful-error'
 import figures from 'figures'
 import ModernError from 'modern-errors'
 import { each } from 'test-each'
@@ -65,4 +66,9 @@ test('Can pass "cause"', (t) => {
   const message = BaseError.beautiful(outerError, { cause: false })
   t.true(message.includes(`${figures.warning} ExitCodeError: test`))
   t.false(message.includes('DatabaseError'))
+})
+
+test('Can call beautiful-error directly', (t) => {
+  const message = beautifulError(error)
+  t.true(message.includes(`${figures.cross} BaseError: test`))
 })
