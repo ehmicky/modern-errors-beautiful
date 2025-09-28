@@ -6,6 +6,11 @@ import type { Info, Plugin } from 'modern-errors'
  */
 export type { Options }
 
+// `error.beautiful()` is called with `errorString` as argument by
+// `beautiful-error`. We ignore that argument and prevent it from being
+// considered an invalid options object.
+const isOptions = (options: unknown) => typeof options !== 'string'
+
 const getOptions = (options: Options = {}) => {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   validateOptions(options)
@@ -41,6 +46,7 @@ const beautiful = ({ error, options }: Info<Options>['instanceMethods']) =>
  */
 const modernErrorsBeautiful = {
   name: 'beautiful' as const,
+  isOptions,
   getOptions,
   instanceMethods: { beautiful },
 } satisfies Plugin
