@@ -5,12 +5,16 @@ import { each } from 'test-each'
 
 import modernErrorsBeautiful from 'modern-errors-beautiful'
 
-const message = 'test'
-
 const BaseError = ModernError.subclass('BaseError', {
   plugins: [modernErrorsBeautiful],
 })
-const error = new BaseError(message)
+const ExitCodeError = BaseError.subclass('ExitCodeError', {
+  beautiful: { icon: 'warning' },
+})
+const DatabaseError = BaseError.subclass('DatabaseError', {
+  beautiful: { icon: 'info' },
+})
+const error = new BaseError('test')
 
 each(
   [true, { stack: 'true' }, { unknown: true }, { classes: {} }],
@@ -41,8 +45,16 @@ test('Can pass "icon" as static option', (t) => {
 })
 
 test('Can pass "icon" as class option', (t) => {
-  const ExitCodeError = BaseError.subclass('ExitCodeError', {
-    beautiful: { icon: 'warning' },
-  })
-  t.true(BaseError.beautiful(new ExitCodeError('')).includes(figures.warning))
+  t.true(
+    BaseError.beautiful(new ExitCodeError('test')).includes(figures.warning),
+  )
+})
+
+test('Can use aggregate errors', (t) => {
+  const inner = new DatabaseError('inner')
+  const outer = new ExitCodeError('test', { errors: [inner] })
+  const message = BaseError.beautiful(inner)
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  t.is(message, outer.beautiful())
+  t.true(message.includes(figures.warning))
 })
