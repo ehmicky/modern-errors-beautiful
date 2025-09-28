@@ -15,6 +15,8 @@ const DatabaseError = BaseError.subclass('DatabaseError', {
   beautiful: { icon: 'info' },
 })
 const error = new BaseError('test')
+const innerError = new DatabaseError('inner')
+const outerError = new ExitCodeError('test', { errors: [innerError] })
 
 each(
   [true, { stack: 'true' }, { unknown: true }, { classes: {} }],
@@ -51,19 +53,16 @@ test('Can pass "icon" as class option', (t) => {
   t.true(message.includes(`${figures.warning} ExitCodeError: test`))
 })
 
-const inner = new DatabaseError('inner')
-const outer = new ExitCodeError('test', { errors: [inner] })
-
 test('Can use aggregate errors', (t) => {
-  const message = BaseError.beautiful(outer)
+  const message = BaseError.beautiful(outerError)
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  t.is(message, outer.beautiful())
+  t.is(message, outerError.beautiful())
   t.true(message.includes(`${figures.warning} ExitCodeError: test`))
   t.true(message.includes(`${figures.info} DatabaseError: inner`))
 })
 
 test('Can pass "cause"', (t) => {
-  const message = BaseError.beautiful(outer, { cause: false })
+  const message = BaseError.beautiful(outerError, { cause: false })
   t.true(message.includes(`${figures.warning} ExitCodeError: test`))
   t.false(message.includes('DatabaseError'))
 })
