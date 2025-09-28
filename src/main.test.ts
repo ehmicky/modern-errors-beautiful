@@ -51,9 +51,10 @@ test('Can pass "icon" as class option', (t) => {
   t.true(message.includes(`${figures.warning} ExitCodeError: test`))
 })
 
+const inner = new DatabaseError('inner')
+const outer = new ExitCodeError('test', { errors: [inner] })
+
 test('Can use aggregate errors', (t) => {
-  const inner = new DatabaseError('inner')
-  const outer = new ExitCodeError('test', { errors: [inner] })
   const message = BaseError.beautiful(outer)
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   t.is(message, outer.beautiful())
@@ -62,8 +63,6 @@ test('Can use aggregate errors', (t) => {
 })
 
 test('Can pass "cause"', (t) => {
-  const inner = new DatabaseError('inner')
-  const outer = new ExitCodeError('test', { errors: [inner] })
   const message = BaseError.beautiful(outer, { cause: false })
   t.true(message.includes(`${figures.warning} ExitCodeError: test`))
   t.false(message.includes('DatabaseError'))
