@@ -1,3 +1,9 @@
+# 2.0.1
+
+## Validation
+
+- Improve typing and validation of options
+
 # 2.0.0
 
 ## Breaking changes
