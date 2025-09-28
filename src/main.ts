@@ -38,8 +38,23 @@ const getOptions = (options: Options = {}) => {
  * }
  * ```
  */
-const beautiful = ({ error, options }: Info<Options>['instanceMethods']) =>
-  beautifulError(error, options)
+// Temporarily unsets `error.beautiful()` to avoid recursion
+const beautiful = ({ error, options }: Info<Options>['instanceMethods']) => {
+  // eslint-disable-next-line fp/no-mutating-methods
+  Object.defineProperty(error, 'beautiful', {
+    value: undefined,
+    enumerable: false,
+    writable: true,
+    configurable: true,
+  })
+
+  try {
+    return beautifulError(error, options)
+  } finally {
+    // eslint-disable-next-line fp/no-delete
+    delete (error as Error & { beautiful?: undefined }).beautiful
+  }
+}
 
 /**
  * `modern-errors-beautiful` plugin

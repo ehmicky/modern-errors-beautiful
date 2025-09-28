@@ -27,34 +27,36 @@ each(
 )
 
 test('Returns beautified errors, static', (t) => {
-  t.true(BaseError.beautiful(error).includes(figures.cross))
+  const message = BaseError.beautiful(error)
+  t.true(message.includes(`${figures.cross} BaseError: test`))
 })
 
 test('Returns beautified errors, instance', (t) => {
-  t.true(error.beautiful().includes(figures.cross))
+  const message = error.beautiful()
+  t.true(message.includes(`${figures.cross} BaseError: test`))
 })
 
 test('Can pass "icon" as instance option', (t) => {
-  t.true(error.beautiful({ icon: 'warning' }).includes(figures.warning))
+  const message = error.beautiful({ icon: 'warning' })
+  t.true(message.includes(`${figures.warning} BaseError: test`))
 })
 
 test('Can pass "icon" as static option', (t) => {
-  t.true(
-    BaseError.beautiful(error, { icon: 'warning' }).includes(figures.warning),
-  )
+  const message = BaseError.beautiful(error, { icon: 'warning' })
+  t.true(message.includes(`${figures.warning} BaseError: test`))
 })
 
 test('Can pass "icon" as class option', (t) => {
-  t.true(
-    BaseError.beautiful(new ExitCodeError('test')).includes(figures.warning),
-  )
+  const message = BaseError.beautiful(new ExitCodeError('test'))
+  t.true(message.includes(`${figures.warning} ExitCodeError: test`))
 })
 
 test('Can use aggregate errors', (t) => {
   const inner = new DatabaseError('inner')
   const outer = new ExitCodeError('test', { errors: [inner] })
-  const message = BaseError.beautiful(inner)
+  const message = BaseError.beautiful(outer)
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   t.is(message, outer.beautiful())
-  t.true(message.includes(figures.warning))
+  t.true(message.includes(`${figures.warning} ExitCodeError: test`))
+  t.true(message.includes(`${figures.info} DatabaseError: inner`))
 })
