@@ -20,7 +20,13 @@ const innerError = new DatabaseError('inner')
 const outerError = new ExitCodeError('test', { errors: [innerError] })
 
 each(
-  [true, { stack: 'true' }, { unknown: true }, { classes: {} }],
+  [
+    true,
+    { stack: 'true' },
+    { unknown: true },
+    { classes: {} },
+    { custom: 'pretty' },
+  ],
   ({ title }, options) => {
     test(`Options are validated | ${title}`, (t) => {
       // @ts-expect-error Type checking should fail due to invalid options

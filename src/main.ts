@@ -1,10 +1,13 @@
-import beautifulError, { validateOptions, type Options } from 'beautiful-error'
+import beautifulError, {
+  validateOptions,
+  type Options as BeautifulErrorOptions,
+} from 'beautiful-error'
 import type { Info, Plugin } from 'modern-errors'
 
 /**
  * Options of `modern-errors-beautiful`
  */
-export type { Options }
+export type Options = Omit<BeautifulErrorOptions, 'classes' | 'custom'>
 
 // `error.beautiful()` is called with `errorString` as argument by
 // `beautiful-error`. We ignore that argument and prevent it from being
@@ -12,11 +15,14 @@ export type { Options }
 const isOptions = (options: unknown) => typeof options !== 'string'
 
 const getOptions = (options: Options = {}) => {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   validateOptions(options)
 
   if (options.classes !== undefined) {
-    throw new TypeError('"classes" must not be defined.')
+    throw new TypeError('The "classes" option must not be defined.')
+  }
+
+  if (options.custom !== undefined) {
+    throw new TypeError('The "custom" option must not be defined.')
   }
 
   return options

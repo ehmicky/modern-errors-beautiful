@@ -25,6 +25,7 @@ ModernError.subclass('TestError', {
 // @ts-expect-error
 BaseError.beautiful(error, true)
 expectNotAssignable<Options>(true)
+
 ModernError.subclass('TestError', {
   plugins: [modernErrorsBeautiful],
   // @ts-expect-error
@@ -33,6 +34,24 @@ ModernError.subclass('TestError', {
 // @ts-expect-error
 BaseError.beautiful(error, { unknown: true })
 expectNotAssignable<Options>({ unknown: true })
+
+ModernError.subclass('TestError', {
+  plugins: [modernErrorsBeautiful],
+  // @ts-expect-error
+  beautiful: { classes: {} },
+})
+// @ts-expect-error
+BaseError.beautiful(error, { classes: {} })
+expectNotAssignable<Options>({ classes: {} })
+
+ModernError.subclass('TestError', {
+  plugins: [modernErrorsBeautiful],
+  // @ts-expect-error
+  beautiful: { custom: 'pretty' },
+})
+// @ts-expect-error
+BaseError.beautiful(error, { custom: 'pretty' })
+expectNotAssignable<Options>({ custom: 'pretty' })
 
 ModernError.subclass('TestError', {
   plugins: [modernErrorsBeautiful],
