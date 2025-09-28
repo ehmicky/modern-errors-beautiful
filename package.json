@@ -54,7 +54,7 @@
     "lib": "src"
   },
   "dependencies": {
-    "beautiful-error": "^2.1.0"
+    "beautiful-error": "^2.2.0"
   },
   "devDependencies": {
     "@ehmicky/dev-tasks": "^3.0.34",
