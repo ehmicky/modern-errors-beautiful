@@ -17,6 +17,7 @@ BaseError.beautiful(error, {})
 expectAssignable<Options>({})
 BaseError.beautiful(error, undefined)
 expectNotAssignable<Options>(undefined)
+
 ModernError.subclass('TestError', {
   plugins: [modernErrorsBeautiful],
   // @ts-expect-error
@@ -25,6 +26,7 @@ ModernError.subclass('TestError', {
 // @ts-expect-error
 BaseError.beautiful(error, true)
 expectNotAssignable<Options>(true)
+
 ModernError.subclass('TestError', {
   plugins: [modernErrorsBeautiful],
   // @ts-expect-error
@@ -36,10 +38,27 @@ expectNotAssignable<Options>({ unknown: true })
 
 ModernError.subclass('TestError', {
   plugins: [modernErrorsBeautiful],
+  // @ts-expect-error
+  beautiful: { classes: { TypeError: { unknown: true } } },
+})
+// @ts-expect-error
+BaseError.beautiful(error, { classes: { TypeError: { unknown: true } } })
+expectNotAssignable<Options>({ classes: { TypeError: { unknown: true } } })
+
+ModernError.subclass('TestError', {
+  plugins: [modernErrorsBeautiful],
   beautiful: { stack: true },
 })
 BaseError.beautiful(error, { stack: true })
 expectAssignable<Options>({ stack: true })
+
+ModernError.subclass('TestError', {
+  plugins: [modernErrorsBeautiful],
+  beautiful: { classes: { TypeError: { stack: true } } },
+})
+BaseError.beautiful(error, { classes: { TypeError: { stack: true } } })
+expectAssignable<Options>({ classes: { TypeError: { stack: true } } })
+
 ModernError.subclass('TestError', {
   plugins: [modernErrorsBeautiful],
   // @ts-expect-error
@@ -48,3 +67,12 @@ ModernError.subclass('TestError', {
 // @ts-expect-error
 BaseError.beautiful(error, { stack: 'true' })
 expectNotAssignable<Options>({ stack: 'true' })
+
+ModernError.subclass('TestError', {
+  plugins: [modernErrorsBeautiful],
+  // @ts-expect-error
+  beautiful: { classes: { TypeError: { stack: 'true' } } },
+})
+// @ts-expect-error
+BaseError.beautiful(error, { classes: { TypeError: { stack: 'true' } } })
+expectNotAssignable<Options>({ classes: { TypeError: { stack: 'true' } } })
