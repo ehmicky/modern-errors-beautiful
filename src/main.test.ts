@@ -10,16 +10,10 @@ const message = 'test'
 const BaseError = ModernError.subclass('BaseError', {
   plugins: [modernErrorsBeautiful],
 })
-const ExitCodeError = BaseError.subclass('ExitCodeError', {
-  beautiful: { icon: 'warning' },
-})
-const InputError = BaseError.subclass('InputError', {
-  beautiful: { icon: 'info' },
-})
 const error = new BaseError(message)
 
 each(
-  [true, { stack: 'true' }, { unknown: true }, { classes: { stack: 'true' } }],
+  [true, { stack: 'true' }, { unknown: true }, { classes: {} }],
   ({ title }, options) => {
     test(`Options are validated | ${title}`, (t) => {
       // @ts-expect-error Type checking should fail due to invalid options
@@ -32,8 +26,12 @@ test('Returns beautified errors, static', (t) => {
   t.true(BaseError.beautiful(error).includes(figures.cross))
 })
 
-test('No instance method', (t) => {
-  t.false('beautiful' in error)
+test('Returns beautified errors, instance', (t) => {
+  t.true(error.beautiful().includes(figures.cross))
+})
+
+test('Can pass "icon" as instance option', (t) => {
+  t.true(error.beautiful({ icon: 'warning' }).includes(figures.warning))
 })
 
 test('Can pass "icon" as static option', (t) => {
@@ -43,16 +41,8 @@ test('Can pass "icon" as static option', (t) => {
 })
 
 test('Can pass "icon" as class option', (t) => {
-  t.true(
-    BaseError.beautiful(new ExitCodeError('test')).includes(figures.warning),
-  )
-})
-
-test('Can pass class-specific options', (t) => {
-  const testError = new ExitCodeError('test', {
-    errors: [new InputError('nested')],
+  const ExitCodeError = BaseError.subclass('ExitCodeError', {
+    beautiful: { icon: 'warning' },
   })
-  const testMessage = BaseError.beautiful(testError)
-  t.true(testMessage.includes(`${figures.warning} ExitCodeError: test`))
-  t.true(testMessage.includes(`${figures.info} InputError: nested`))
+  t.true(BaseError.beautiful(new ExitCodeError('')).includes(figures.warning))
 })

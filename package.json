@@ -54,8 +54,7 @@
     "lib": "src"
   },
   "dependencies": {
-    "beautiful-error": "^2.0.0",
-    "is-plain-obj": "^4.1.0"
+    "beautiful-error": "^2.0.0"
   },
   "devDependencies": {
     "@ehmicky/dev-tasks": "^3.0.34",
